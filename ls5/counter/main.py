@@ -2,6 +2,8 @@ import flet as ft
 
 def main(page: ft.Page):
     page.title = "Counter"
+    page.window_width=500
+    page.window_height=650
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
 
     number_input = ft.TextField(value="0", text_align=ft.TextAlign.RIGHT, width=100)
@@ -16,11 +18,11 @@ def main(page: ft.Page):
         page.update()
     
     def remove_click(event):
-        number_input.value = str(int(number_input.value) - txt_in)
+        number_input.value = str(int(number_input.value) - int(txt_in.value))
         page.update()
     
     def add_click(event):
-        number_input.value = str(int(number_input.value) + txt_in)
+        number_input.value = str(int(number_input.value) + int(txt_in.value))
         page.update()
 
     page.add(
