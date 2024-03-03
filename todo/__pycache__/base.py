@@ -1,9 +1,12 @@
 import flet as ft 
-
+from task import Task
 
 class TodoApp(ft.UserControl):
     def build(self):
-        self.new_task_input = ft.TextField(hint_text="Whats needs to be done?", on_submit=self.handle_add_task)
+        self.new_task_input = ft.TextField(
+            hint_text="Whats needs to be done?", 
+            on_submit=self.handle_add_task, expand=True
+        )
         self.tasks_viewport = ft.Column()
 
         return ft.Column(
@@ -23,7 +26,11 @@ class TodoApp(ft.UserControl):
         )
     
     def handle_add_task(self, e):
-        # ADD NEW TASK EVENT HANDLER
-        self.tasks_viewport.controls.append(ft.Checkbox(label=self.new_task_input.value))
+        task = Task(self.new_task_input.value, self.handle_remove_task)
+        self.tasks_viewport.controls.append(task)
         self.new_task_input.value = ""
+        self.update()
+    
+    def handle_remove_task(self, task):
+        self.tasks_viewport.controls.remove(task)
         self.update()

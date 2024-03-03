@@ -1,12 +1,10 @@
-import flet as ft 
+from flet import Page, app, CrossAxisAlignment
 from base import TodoApp
     
-def main(page: ft.Page):
-    page.title = "TODO List v1.0.0"
-    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+def main(page: Page):
+    page.title, page.horizontal_alignment = "TODO List v1.0.0", CrossAxisAlignment.CENTER
     page.update()
-    app = TodoApp()
-    page.add(app)
+    page.add(TodoApp())
 
 if __name__ == "__main__":
-    ft.app(target=main)
+    app(target=main)
