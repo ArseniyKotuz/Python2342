@@ -12,10 +12,17 @@ from aiogram.utils.markdown import hbold
 from aiogram.fsm.storage.memory import SimpleEventIsolation
 from aiogram.fsm.scene import Scene, SceneRegistry, ScenesManager, on
 from aiogram.fsm.context import FSMContext
-from aiogram.utils.keyboard import KeyboardBuilder
+from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
-TOKEN=""
-print(TOKEN)
+from aiogram.utils.formatting import (
+    as_list, 
+    as_section,
+    as_numbered_list, 
+    as_key_value,
+    Bold,
+)
+
+TOKEN="6814079618:AAG34Lv_Q_YxkcuW2sg315W19WACrVHt14g"
 
 @dataclass
 class Answer: 
@@ -33,34 +40,7 @@ class Question:
         self.correct_answer = next(answer.text for answer in self.answers if answer.is_correct)
 
 QUESTIONS = [
-    Question(
-        text="What is the largest planet in our solar system?",
-        answers=[
-            Answer("Mars"),
-            Answer("Venus"),
-            Answer("Jupiter", is_correct=True),
-            Answer("Saturn"),
-        ]
-    ),
-    Question(
-        text="Who is the author of 'Romeo and Juliet'?",
-        answers=[
-            Answer("Charles Dickens"),
-            Answer("William Shakespeare", is_correct=True),
-            Answer("Jane Austen"),
-            Answer("Mark Twain"),
-        ]
-    ),
-    Question(
-        text="In which year did World War II end?",
-        answers=[
-            Answer("1943"),
-            Answer("1945", is_correct=True),
-            Answer("1947"),
-            Answer("1950"),
-        ]
-    ),
-    Question(
+        Question(
         text="What is the capital of Australia?",
         answers=[
             Answer("Sydney"),
@@ -124,6 +104,15 @@ QUESTIONS = [
         ]
     ),
     Question(
+        text="Which ocean is the largest?",
+        answers=[
+            Answer("Atlantic Ocean"),
+            Answer("Indian Ocean"),
+            Answer("Arctic Ocean", is_correct=True),
+            Answer("South Ocean"),
+        ]
+    ),
+    Question(
         text="What is the capital of Canada?",
         answers=[
             Answer("Toronto"),
@@ -159,141 +148,6 @@ QUESTIONS = [
             Answer("Antarctica", is_correct=True),
         ]
     ),
-    Question(
-        text="Which element has the chemical symbol 'H'?",
-        answers=[
-            Answer("Helium"),
-            Answer("Hydrogen", is_correct=True),
-            Answer("Hassium"),
-            Answer("Hafnium"),
-        ]
-    ),
-    Question(
-        text="Who painted the Mona Lisa?",
-        answers=[
-            Answer("Vincent van Gogh"),
-            Answer("Pablo Picasso"),
-            Answer("Leonardo da Vinci", is_correct=True),
-            Answer("Claude Monet"),
-        ]
-    ),
-    Question(
-        text="What is the capital of Brazil?",
-        answers=[
-            Answer("Sao Paulo"),
-            Answer("Rio de Janeiro"),
-            Answer("Brasilia", is_correct=True),
-            Answer("Salvador"),
-        ]
-    ),
-    Question(
-        text="Which planet is known as the 'Red Planet'?",
-        answers=[
-            Answer("Mars", is_correct=True),
-            Answer("Venus"),
-            Answer("Jupiter"),
-            Answer("Saturn"),
-        ]
-    ),
-    Question(
-        text="Who is the famous scientist who formulated the theory of relativity?",
-        answers=[
-            Answer("Isaac Newton"),
-            Answer("Galileo Galilei"),
-            Answer("Albert Einstein", is_correct=True),
-            Answer("Stephen Hawking"),
-        ]
-    ),
-    Question(
-        text="In what year did the United States declare its independence?",
-        answers=[
-            Answer("1765"),
-            Answer("1776", is_correct=True),
-            Answer("1789"),
-            Answer("1800"),
-        ]
-    ),
-        Question(
-        text="What is the name of our galaxy?",
-        answers=[
-            Answer("Andromeda"),
-            Answer("Milky Way", is_correct=True),
-            Answer("Sombrero"),
-            Answer("Triangulum"),
-        ]
-    ),
-    Question(
-        text="What is the closest star to Earth, besides the Sun?",
-        answers=[
-            Answer("Alpha Centauri"),
-            Answer("Proxima Centauri", is_correct=True),
-            Answer("Sirius"),
-            Answer("Betelgeuse"),
-        ]
-    ),
-    Question(
-        text="What is the hottest planet in our solar system?",
-        answers=[
-            Answer("Mars"),
-            Answer("Venus", is_correct=True),
-            Answer("Jupiter"),
-            Answer("Saturn"),
-        ]
-    ),
-    Question(
-        text="What is the name of the first man-made satellite launched into space?",
-        answers=[
-            Answer("Apollo 11"),
-            Answer("Sputnik 1", is_correct=True),
-            Answer("Vostok 1"),
-            Answer("Explorer 1"),
-        ]
-    ),
-    Question(
-        text="What is the term for a group of stars forming a recognizable pattern?",
-        answers=[
-            Answer("Constellation", is_correct=True),
-            Answer("Galaxy"),
-            Answer("Nebula"),
-            Answer("Quasar"),
-        ]
-    ),
-    Question(
-        text="What is the outermost layer of the Earth's atmosphere called?",
-        answers=[
-            Answer("Stratosphere"),
-            Answer("Mesosphere"),
-            Answer("Exosphere", is_correct=True),
-            Answer("Troposphere"),
-        ]
-    ),
-    Question(
-        text="What is the name of the largest moon of Saturn?",
-        answers=[
-            Answer("Titan", is_correct=True),
-            Answer("Europa"),
-            Answer("Ganymede"),
-            Answer("Callisto"),
-        ]
-    ),
-    Question(
-        text="What is the phenomenon where a total solar eclipse occurs, blocking the Sun's light?",
-        answers=[
-            Answer("Lunar eclipse"),
-            Answer("Asteroid belt"),
-            Answer("Meteor shower"),
-            Answer("Solar eclipse", is_correct=True),
-        ]
-    ),
-    Question(
-        text="What is the name of the imaginary line that divides the Earth into Northern and Southern Hemispheres?",
-        answers=[
-            Answer("Prime Meridian"),
-            Answer("Equator", is_correct=True),
-            Answer("Tropic of Cancer"),
-            Answer("Tropic of Capricorn"),
-        ]
-    ),
 ]
 
 class QuizScene(Scene, state="quiz"):
@@ -308,19 +162,79 @@ class QuizScene(Scene, state="quiz"):
         except IndexError:
             return await self.wizard.exit()
         
-        markup = KeyboardBuilder()
+        markup = ReplyKeyboardBuilder()
         markup.add(*[KeyboardButton(text=answer.text) for answer in quiz.answers])
 
         if step > 0:
-            markup.add(text="Back")
-        markup.add(text="Exit")
+            markup.button(text="Back")
+        markup.button(text="Exit")
 
         await state.update_data(step=step)
         return await message.answer(
             text=QUESTIONS[step].text, 
             reply_markup=markup.adjust(2).as_markup(resize_keyboard=True),
         )
+    
+    @on.message.exit()
+    async def on_exit(self, message: Message, state: FSMContext):
+        data = await state.get_data()
+        answers = data.get("answers", {})
 
+        correct, incorrect = 0, 0
+        user_answers = []
+        for step, quiz in enumerate(QUESTIONS):
+            answer = answers.get(step)
+            is_correct = answer == quiz.correct_answer
+            if is_correct:
+                correct += 1
+                icon = "✅"
+            else:
+                incorrect += 1
+                icon = "❌"
+            if answer is None:
+                answer = "No answer"
+            user_answers.append(f"{quiz.text} ({icon} {html.quote(answer)})")
+        
+        content = as_list(
+            as_section(
+                Bold("Your answers: "),
+                as_numbered_list(*user_answers),
+            ),
+            "",
+            as_list(
+                as_key_value("Correct", correct),
+                as_key_value("Inncorect", incorrect)
+            )
+        )
+        await message.answer(**content.as_kwargs(), reply_markup=ReplyKeyboardRemove())
+        await state.set_data({})
+    
+    @on.message(F.text=="Back")
+    async def back(self, message: Message, state: FSMContext):
+        data = await state.get_data()
+        step = data["step"]
+        prev = step -1
+        if prev < 0:
+            return self.wizard.exit()
+        return await self.wizard.back(step=prev)
+    
+    @on.message(F.text=="Exit")
+    async def exit(self, message: Message):
+            return self.wizard.exit()
+    
+    @on.message(F.text)
+    async def answer(self, message: Message, state: FSMContext):
+        data = await state.get_data()
+        step = data.get("step", 0)
+        answers = data.get("answers", {})
+        answers[step] = message.text
+        await state.update_data(answers=answers)
+        await self.wizard.retake(step=step+1)
+
+    @on.message()
+    async def unknown_messages(self, message: Message):
+        await message.answer("Please select on answer")
+        
 quiz_router = Router(name=__name__)
 quiz_router.message.register(QuizScene.as_handler(), Command("quiz"))
 
