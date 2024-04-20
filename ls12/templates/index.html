@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="content">
+    <h1>All Articles about F1</h1>
+    <div class="cards">
+        {% for article in articles %}
+            <a class="card" href="/article/{{ article.id }}"> 
+                <img src="{{ article.img }}" alt="Photot Title">   
+                <h2>{{ article.title }}</h2>
+                <p>{{ article.content[0:50] }}</p>
+            </a>
+            {% endfor %}
+    </div>
+</div>
+{% endblock %}

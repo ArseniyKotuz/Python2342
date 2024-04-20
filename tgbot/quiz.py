@@ -104,7 +104,7 @@ QUESTIONS = [
         ]
     ),
     Question(
-        text="Which ocean is the largest?",
+        text="Which ocean is the smalest?",
         answers=[
             Answer("Atlantic Ocean"),
             Answer("Indian Ocean"),
